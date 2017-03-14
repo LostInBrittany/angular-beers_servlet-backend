@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bson.Document;
+import org.lostinbrittany.beers.dao.BeerDAO;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -33,40 +34,9 @@ public class BeerListServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		MongoClient mongoClient = new MongoClient();
-		
-		MongoDatabase database = mongoClient.getDatabase("beers");
-		
-		MongoCollection<Document> beers = database.getCollection("beers");
-		
-		
-		/*
-		   {
-		    "alcohol": 6.8,
-		    "description": "Affligem Blonde, the classic clear blonde abbey ale, with a gentle roundness and 6.8% alcohol. Low on bitterness, it is eminently drinkable.",
-		    "id": "AffligemBlond",
-		    "img": "/img/AffligemBlond.jpg",
-		    "name": "Affligem Blond"
-		  },
-		 */
-		StringBuilder sb = new StringBuilder("[");
-		for (Document beer : beers.find()) {
-			
-			
-			sb.append("{")
-				.append("\"alcohol\":").append(beer.get("alcohol").toString()).append(",")
-				.append("\"id\":\"").append(beer.getString("id")).append("\",")
-				.append("\"img\":\"").append(beer.getString("img")).append("\",")
-				.append("\"name\":\"").append(beer.getString("name")).append("\",")
-				.append("\"description\":\"").append(beer.getString("description")).append("\"")
-				.append("},");
-				
-			System.out.println(beer.getString("name"));
-		}
-		sb.deleteCharAt(sb.length()-1).append("]");
-
-		response.getWriter().append(sb.toString());
-
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("application/json");
+		response.getWriter().append(BeerDAO.getBeerList());
 	}
 
 	/**

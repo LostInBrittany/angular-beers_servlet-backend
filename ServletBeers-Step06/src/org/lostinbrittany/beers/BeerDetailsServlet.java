@@ -10,6 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+import org.lostinbrittany.beers.dao.BeerDAO;
+
+
 /**
  * Servlet implementation class BeerDetailsServlet
  */
@@ -33,21 +37,15 @@ public class BeerDetailsServlet extends HttpServlet {
 		
 		String id = request.getParameter("id");
 		
-		if (null == id || "null".equals(id)) {
+		if (StringUtils.isBlank(id)) {
 			response.setStatus(404);
 			response.getWriter().append("{\"error\": { \"status\": 404}}");	
-			return;
+			return;	
 		}
-		String tomcatRoot = getServletContext().getRealPath("/");
-		OutputStream out = response.getOutputStream();
-		FileInputStream in = new FileInputStream(tomcatRoot+ "/data/beers/details/"+id+".json");
-		byte[] buffer = new byte[4096];
-		int length;
-		while ((length = in.read(buffer)) > 0){
-		    out.write(buffer, 0, length);
-		}
-		in.close();
-		out.flush();
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("application/json");
+		response.getWriter().append(BeerDAO.getBeer(id));
+
 	}
 
 	/**
