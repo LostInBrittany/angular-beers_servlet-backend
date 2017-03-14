@@ -3,6 +3,10 @@ package org.lostinbrittany.beers.model;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.UrlValidator;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+
 public class Beer {
 
 
@@ -20,11 +24,11 @@ public class Beer {
      * "style": "Belgian-Style Blonde Ale"}
 	 */
 	
-	private String name;
-	private String id;
-	private String img;
-	private String description;
-	private double alcohol;
+	@Expose private String name;
+	@Expose private String id;
+	@Expose private String img;
+	@Expose private String description;
+	@Expose private double alcohol;
 
 	private String availability;
 	private String brewery;
@@ -33,6 +37,8 @@ public class Beer {
 	private String style;
 
 
+	public static final Gson gson = new Gson();
+	
 	public static final double MAX_ALCOHOL = 20.0;	
 	public static final int MAX_NAME_LENGTH = 150;
 	public static final int MAX_DESCRIPTION_LENGTH = 1500;
@@ -160,4 +166,19 @@ public class Beer {
 	}	
 	
 	
+	public String toJSONDetail() {
+		return gson.toJson(this);		
+	}
+	
+	public static Beer fromJson(String json) {
+		return gson.fromJson(json, Beer.class);
+	}
+	
+	public String toJSON() {
+		final GsonBuilder builder = new GsonBuilder();
+	    builder.excludeFieldsWithoutExposeAnnotation();
+	    final Gson gsonShort = builder.create();
+		
+		return gsonShort.toJson(this);
+	}
 }
