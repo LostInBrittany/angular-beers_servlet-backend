@@ -1,4 +1,4 @@
-package org.lostinbrittany.beers;
+package org.lostinbrittany.beers.servlet;
 
 import java.io.IOException;
 import javax.servlet.ServletException;

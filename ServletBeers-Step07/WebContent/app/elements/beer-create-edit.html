@@ -79,19 +79,76 @@
 
 
     <iron-ajax
-      url="../../BeerCreate"
       id="createRequest"
       method='post'
       handle-as="json"
       on-response="createdBeers"
+      debounce-duration="300"></iron-ajax>
+    <iron-ajax
+      url="{{url}}"
+      id="getBeerRequest"
+      method='get'
+      params='{}'
+      handle-as="json"
+      on-response="gotBeers"
       debounce-duration="300"></iron-ajax>
   </template>
 
   <script>
     Polymer({
       is: "beer-create-edit",
-      doAction: function() {
-        
+      properties: {
+    	action: {
+    		type: String,
+    		value: "Create"
+    	},  
+    	id: { 
+    		type: String,
+    		value: "",
+    		observer: "onIdChange"
+    	},
+    	name: {
+    		type: String,
+    		value: ""
+    	},
+    	alcohol: {
+    		type: Number,
+    		value: ""
+    	},
+    	description: {
+    		type: String,
+    		value: ""
+    	},
+    	img: {
+    		type: String,
+    		value: ""
+    	},
+    	availability: {
+    		type: String,
+    		value: ""
+    	},
+    	brewery: {
+    		type: String,
+    		value: ""
+    	},
+    	label: {
+    		type: String,
+    		value: ""
+    	},
+    	serving: {
+    		type: String,
+    		value: ""
+    	},
+    	style: {
+    		type: String,
+    		value: ""
+    	},
+      },
+      onIdChange: function() {
+    	this.$.getBeerRequest.url= "../beer?id="+this.id;
+        this.$.getBeerRequest.generateRequest();
+      },
+      doAction: function() {        
         this.$.createRequest.params = {
           "name": this.name,
           "alcohol": this.alcohol,
@@ -103,11 +160,31 @@
           "serving": this.serving,
           "style": this.style,
         }
+        if (this.action == "Create") {
+        	this.$.createRequest.url = "../create" 
+        } else {
+        	this.$.createRequest.params.id = this.id;
+        	this.$.createRequest.url = "../edit"; 
+        }
         this.$.createRequest.generateRequest();
       },
       createdBeers: function(evt, ironRequest) {
         windows.location.hash = "#/";
-      }
+      },
+
+      gotBeers: function(event, ironRequest) {
+        var beer = ironRequest.response;
+        console.log("Beer", beer);
+        this.name = beer.name;
+        this.alcohol = beer.alcohol;
+        this.description = beer.description;
+        this.img = beer.img;
+        this.availability = beer.availability;
+        this.brewery = beer.brewery;
+        this.label = beer.label;
+        this.serving = beer.serving;
+        this.style = beer.style;
+      },
     })
   </script>
 </dom-module> 
