@@ -169,7 +169,9 @@
         this.$.createRequest.generateRequest();
       },
       createdBeers: function(evt, ironRequest) {
-        windows.location.hash = "#/";
+        var path = "#/beers";
+        window.history.pushState({}, null, path);
+        window.dispatchEvent(new CustomEvent('location-changed'));
       },
 
       gotBeers: function(event, ironRequest) {
